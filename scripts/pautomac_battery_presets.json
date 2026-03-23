@@ -1,0 +1,199 @@
+{
+  "version": "2026-03-23",
+  "groups": {
+    "quick_smoke_v1": [
+      "pfsa_merge",
+      "pfsa_bw",
+      "hmm_bw"
+    ],
+    "all_models_v1": [
+      "pfsa_merge",
+      "pfsa_mdi",
+      "pfsa_bw",
+      "pfsa_dabw",
+      "pfsa_vb",
+      "pfsa_vit",
+      "pfsa_vitbw",
+      "pfsa_gs_cpu",
+      "pfsa_gs_cuda",
+      "hmm_bw",
+      "hmm_dabw",
+      "hmm_vb",
+      "hmm_vit",
+      "hmm_vitbw",
+      "hmm_gs_cpu",
+      "hmm_gs_cuda"
+    ]
+  },
+  "models": {
+    "pfsa_merge": {
+      "description": "PFSA state merging (ALERGIA default)",
+      "stochastic": false,
+      "treba_args": [
+        "--train=merge",
+        "--alpha=0.3"
+      ]
+    },
+    "pfsa_mdi": {
+      "description": "PFSA MDI merge algorithm",
+      "stochastic": false,
+      "treba_args": [
+        "--train=mdi",
+        "--alpha=0.3"
+      ]
+    },
+    "pfsa_bw": {
+      "description": "PFSA Baum-Welch (EM)",
+      "stochastic": true,
+      "treba_args": [
+        "--train=bw",
+        "--initialize=20",
+        "--max-iter=200",
+        "--threads=c/2"
+      ]
+    },
+    "pfsa_dabw": {
+      "description": "PFSA deterministic annealing Baum-Welch",
+      "stochastic": true,
+      "treba_args": [
+        "--train=dabw",
+        "--initialize=20",
+        "--max-iter=200",
+        "--threads=c/2"
+      ]
+    },
+    "pfsa_vb": {
+      "description": "PFSA variational Bayes",
+      "stochastic": true,
+      "treba_args": [
+        "--train=vb",
+        "--initialize=20",
+        "--max-iter=200",
+        "--threads=c/2"
+      ]
+    },
+    "pfsa_vit": {
+      "description": "PFSA Viterbi (hard EM)",
+      "stochastic": true,
+      "treba_args": [
+        "--train=vit",
+        "--initialize=20",
+        "--max-iter=200"
+      ]
+    },
+    "pfsa_vitbw": {
+      "description": "PFSA Viterbi then Baum-Welch",
+      "stochastic": true,
+      "treba_args": [
+        "--train=vitbw",
+        "--initialize=20",
+        "--max-iter=200",
+        "--threads=c/2"
+      ]
+    },
+    "pfsa_gs_cpu": {
+      "description": "PFSA collapsed Gibbs (CPU)",
+      "stochastic": true,
+      "treba_args": [
+        "--train=gs",
+        "--initialize=20",
+        "--max-iter=2000",
+        "--burnin=500",
+        "--lag=50"
+      ]
+    },
+    "pfsa_gs_cuda": {
+      "description": "PFSA collapsed Gibbs (CUDA)",
+      "stochastic": true,
+      "requires_cuda_device": true,
+      "treba_args": [
+        "--train=gs",
+        "--cuda",
+        "--initialize=20",
+        "--max-iter=2000",
+        "--burnin=500",
+        "--lag=50"
+      ]
+    },
+    "hmm_bw": {
+      "description": "HMM Baum-Welch (EM)",
+      "stochastic": true,
+      "treba_args": [
+        "--hmm",
+        "--train=bw",
+        "--initialize=20",
+        "--max-iter=200",
+        "--threads=c/2"
+      ]
+    },
+    "hmm_dabw": {
+      "description": "HMM deterministic annealing Baum-Welch",
+      "stochastic": true,
+      "treba_args": [
+        "--hmm",
+        "--train=dabw",
+        "--initialize=20",
+        "--max-iter=200",
+        "--threads=c/2"
+      ]
+    },
+    "hmm_vb": {
+      "description": "HMM variational Bayes",
+      "stochastic": true,
+      "treba_args": [
+        "--hmm",
+        "--train=vb",
+        "--initialize=20",
+        "--max-iter=200",
+        "--threads=c/2"
+      ]
+    },
+    "hmm_vit": {
+      "description": "HMM Viterbi (hard EM)",
+      "stochastic": true,
+      "treba_args": [
+        "--hmm",
+        "--train=vit",
+        "--initialize=20",
+        "--max-iter=200"
+      ]
+    },
+    "hmm_vitbw": {
+      "description": "HMM Viterbi then Baum-Welch",
+      "stochastic": true,
+      "treba_args": [
+        "--hmm",
+        "--train=vitbw",
+        "--initialize=20",
+        "--max-iter=200",
+        "--threads=c/2"
+      ]
+    },
+    "hmm_gs_cpu": {
+      "description": "HMM collapsed Gibbs (CPU)",
+      "stochastic": true,
+      "treba_args": [
+        "--hmm",
+        "--train=gs",
+        "--initialize=20",
+        "--max-iter=2000",
+        "--burnin=500",
+        "--lag=50"
+      ]
+    },
+    "hmm_gs_cuda": {
+      "description": "HMM collapsed Gibbs (CUDA)",
+      "stochastic": true,
+      "requires_cuda_device": true,
+      "treba_args": [
+        "--hmm",
+        "--train=gs",
+        "--cuda",
+        "--initialize=20",
+        "--max-iter=2000",
+        "--burnin=500",
+        "--lag=50"
+      ]
+    }
+  }
+}

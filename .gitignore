@@ -1,0 +1,19 @@
+# Build artifacts
+*.o
+treba
+treba_cuda.o
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Run outputs and experiment artifacts
+runs/
+
+# Temporarily keep local-only
+SKILL.md
+pautomac_final.tar.gz
+
+# Editor/OS noise
+*.swp
+.DS_Store
