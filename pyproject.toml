@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "treba-py"
+version = "0.1.0"
+description = "Notebook-friendly Python wrapper for the Treba PFSA/HMM toolkit"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "GPL-2.0-only"}
+authors = [
+  {name = "Treba contributors"}
+]
+keywords = ["hmm", "pfsa", "automata", "em", "pautomac"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence"
+]
+dependencies = []
+
+[project.optional-dependencies]
+viz = ["graphviz>=0.20"]
+
+[tool.setuptools]
+packages = ["treba_py"]

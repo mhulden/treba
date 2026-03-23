@@ -13,6 +13,49 @@ RM = /bin/rm -f
 # (newer GCC defaults to `-fno-common`, which breaks this codebase).
 CFLAGS = -O3 -ffast-math -fcommon
 HOST_ARCH := $(shell uname -m)
+UNAME_S := $(shell uname -s)
+
+# GSL configuration:
+# - On macOS, auto-detect Homebrew prefix.
+# - Otherwise, try pkg-config.
+# - Callers can always override via GSL_PREFIX, GSL_CFLAGS, GSL_LIBS.
+GSL_PREFIX ?=
+GSL_CFLAGS ?=
+GSL_LIBS ?=
+
+ifeq ($(UNAME_S),Darwin)
+ifeq ($(strip $(GSL_PREFIX)),)
+HOMEBREW_PREFIX ?= $(shell brew --prefix 2>/dev/null)
+ifeq ($(strip $(HOMEBREW_PREFIX)),)
+ifneq ("$(wildcard /opt/homebrew/include/gsl/gsl_rng.h)","")
+HOMEBREW_PREFIX := /opt/homebrew
+else ifneq ("$(wildcard /usr/local/include/gsl/gsl_rng.h)","")
+HOMEBREW_PREFIX := /usr/local
+endif
+endif
+GSL_PREFIX := $(HOMEBREW_PREFIX)
+endif
+endif
+
+ifeq ($(strip $(GSL_PREFIX)),)
+ifeq ($(strip $(GSL_CFLAGS)),)
+GSL_CFLAGS := $(shell pkg-config --cflags gsl 2>/dev/null)
+endif
+ifeq ($(strip $(GSL_LIBS)),)
+GSL_LIBS := $(shell pkg-config --libs gsl 2>/dev/null)
+endif
+else
+GSL_CFLAGS += -I$(GSL_PREFIX)/include
+ifeq ($(strip $(GSL_LIBS)),)
+GSL_LIBS := -L$(GSL_PREFIX)/lib -lgsl -lgslcblas
+endif
+endif
+
+ifeq ($(strip $(GSL_LIBS)),)
+GSL_LIBS := -lgsl -lgslcblas
+endif
+
+CFLAGS += $(GSL_CFLAGS)
 
 ifeq ($(CUDA),1)
 	CUDA_INSTALL_PATH ?= /usr/local/cuda
@@ -23,11 +66,11 @@ ifeq ($(HOST_ARCH),aarch64)
 	NVCCFLAGS += -D__GNUC__=8 -D__GNUC_MINOR__=0
 endif
 	CFLAGS += -DUSE_CUDA
-	LFLAGS = -lm -lpthread -L$(CUDA_INSTALL_PATH)/lib64 -L$(CUDA_INSTALL_PATH)/lib -lcudart -lgsl -lgslcblas
+	LFLAGS = -lm -lpthread -L$(CUDA_INSTALL_PATH)/lib64 -L$(CUDA_INSTALL_PATH)/lib -lcudart $(GSL_LIBS)
 	TREBADEPS = treba.o dffa.o gibbs.o observations.o io.o treba.h treba_cuda.o fastlogexp.h
 	TREBACMD = $(CC) $(CFLAGS) -DUSE_CUDA -o treba treba_cuda.o treba.o dffa.o gibbs.o observations.o io.o $(LFLAGS)
 else
-	LFLAGS = -lm -lpthread -lgsl -lgslcblas
+	LFLAGS = -lm -lpthread $(GSL_LIBS)
 	TREBADEPS = treba.o dffa.o gibbs.o observations.o io.o treba.h fastlogexp.h
 	TREBACMD = $(CC) $(CFLAGS) -o treba treba.o dffa.o gibbs.o observations.o io.o $(LFLAGS)
 endif

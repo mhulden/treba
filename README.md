@@ -1,4 +1,8 @@
-# Treba (Archived) - PFSA/HMM Training and Decoding
+# Treba - PFSA/HMM Training and Decoding
+
+<p align="center">
+  <img src="docs/treba-logo.png" alt="Treba logo" width="248">
+</p>
 
 `treba` is a command-line toolkit (C, optional CUDA) for probabilistic finite-state automata (PFSA/WFSA) and hidden Markov models (HMM).
 
@@ -44,10 +48,39 @@ Notes for modern systems:
 
 - Treba needs GSL (`-lgsl -lgslcblas`) and headers.
 - This repository Makefile has been updated for modern toolchains:
+  - GSL detection:
+    - Linux/Unix: tries `pkg-config gsl` first, then falls back to `-lgsl -lgslcblas`
+    - macOS: auto-detects Homebrew prefix (`/opt/homebrew` or `/usr/local`) and adds include/lib flags
   - CUDA arch defaults: `sm_60 sm_70 sm_75 sm_80 sm_86`
   - CUDA libs searched in `$(CUDA_INSTALL_PATH)/lib64` and `.../lib`
   - Legacy GCC global-symbol behavior preserved via `-fcommon`
 - On `aarch64`, build uses an NVCC compatibility workaround (`-D__GNUC__=8 -D__GNUC_MINOR__=0`) for CUDA 12 + recent glibc headers.
+
+### macOS (Homebrew) quick notes
+
+Install GSL:
+
+```bash
+brew install gsl
+```
+
+Then build normally:
+
+```bash
+make clean && make
+```
+
+If your GSL prefix is nonstandard, override explicitly:
+
+```bash
+make GSL_PREFIX="$(brew --prefix)"
+```
+
+You can also override flags directly:
+
+```bash
+make GSL_CFLAGS="-I/your/prefix/include" GSL_LIBS="-L/your/prefix/lib -lgsl -lgslcblas"
+```
 
 ## CLI Overview
 
@@ -212,6 +245,46 @@ Notes:
 - Presets live in `scripts/pautomac_battery_presets.json`.
 - CUDA preset models are auto-skipped when CUDA runtime is not usable (`--cuda-mode auto`, default).
 - Each run writes `manifest.json`, `results.csv`, `results.jsonl`, `summary.md`, and per-task logs under `runs/pautomac_battery/<run_id>/`.
+
+## Python API
+
+A notebook-friendly Python wrapper (classes `HMM`/`PFSA`, token encoding, runner backend, and Graphviz hooks) is available in:
+
+- `treba_py/`
+- `docs/PYTHON_API_DRAFT.md`
+
+Current capabilities:
+
+- Train with `fit(...)` using arbitrary hashable Python tokens
+- Score with `score(...)` / `predict_proba(...)`
+- Decode with `decode(...)`
+- Sample with `sample(...)`
+- Render models with Graphviz via `draw(...)`
+- Save/load with `save(...)` and `HMM.from_file(...)` / `PFSA.from_file(...)`
+
+Install the wrapper for notebook use:
+
+```bash
+python3 -m pip install -e .
+```
+
+Notes:
+
+- Unknown-token mapping (`unknown_policy='use_unk'`) requires the unknown symbol to be represented in the trained model alphabet; see `docs/PYTHON_API_DRAFT.md` for details.
+
+Notebook examples:
+
+- `notebooks/01_treba_py_quickstart.ipynb` (toy PFSA/HMM train/score/decode/draw/save/load)
+- `notebooks/02_pautomac_mini_workflow.ipynb` (small PAutomaC workflow on one problem)
+- Source-of-truth jupytext files:
+  - `notebooks/01_treba_py_quickstart.py`
+  - `notebooks/02_pautomac_mini_workflow.py`
+
+Regenerate notebooks from jupytext sources:
+
+```bash
+jupytext --to ipynb notebooks/*.py
+```
 
 ## Legacy Release Notes (from archive metadata)
 
