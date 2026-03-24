@@ -1,7 +1,7 @@
 # Treba - PFSA/HMM Training and Decoding
 
 <p align="center">
-  <img src="docs/treba-logo.png" alt="Treba logo" width="248">
+  <img src="docs/treba-logo.png" alt="Treba logo" width="283">
 </p>
 
 `treba` is a command-line toolkit (C, optional CUDA) for probabilistic finite-state automata (PFSA/WFSA) and hidden Markov models (HMM).
